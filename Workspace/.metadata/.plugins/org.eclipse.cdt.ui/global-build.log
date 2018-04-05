@@ -1,24 +1,40 @@
 
-**** Build of configuration Debug for project 002-FIR ****
+**** Build of configuration Debug for project 002-FIR_CB ****
 
 "D:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
 'Building file: ../main.c'
 'Invoking: ARM Compiler'
-"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="D:/TI-DSP/Workspace/002-FIR" --include_path="D:/ti/TivaWare_C_Series-2.1.4.178" --include_path="D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi --preproc_with_compile --preproc_dependency="main.d"  "../main.c"
+"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="D:/TI-DSP/Workspace/002-FIR_CB" --include_path="D:/ti/TivaWare_C_Series-2.1.4.178" --include_path="D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include" --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi --preproc_with_compile --preproc_dependency="main.d"  "../main.c"
+"D:/ti/TivaWare_C_Series-2.1.4.178/inc/tm4c123gh6pm.h", line 12713: warning #1-D: last line of file ends without a newline
+"../main.c", line 130: warning #179-D: variable "ui8LED" was declared but never referenced
 'Finished building: ../main.c'
 ' '
-'Building target: 002-FIR.out'
+'Building target: 002-FIR_CB.out'
 'Invoking: ARM Linker'
-"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"002-FIR.map" --heap_size=0 --stack_size=512 -i"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/lib" -i"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="002-FIR_linkInfo.xml" --rom_model -o "002-FIR.out" "./main.obj" "./tm4c123gh6pm_startup_ccs.obj" "../driverlib.lib" "../tm4c123gh6pm.cmd"  -llibc.a 
+"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"002-FIR_CB.map" --heap_size=0 --stack_size=512 -i"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/lib" -i"D:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="002-FIR_CB_linkInfo.xml" --rom_model -o "002-FIR_CB.out" "./main.obj" "./tm4c123gh6pm_startup_ccs.obj" "../driverlib.lib" "../tm4c123gh6pm.cmd"  -llibc.a 
 <Linking>
-'Finished building target: 002-FIR.out'
+'Finished building target: 002-FIR_CB.out'
 ' '
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project 002-FIR ****
+**** Build of configuration Debug for project 002-FIR_CB ****
 
 "D:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
-gmake[1]: '002-FIR.out' is up to date.
+gmake[1]: '002-FIR_CB.out' is up to date.
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project 002-FIR_CB ****
+
+"D:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
+gmake[1]: '002-FIR_CB.out' is up to date.
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project 002-FIR_CB ****
+
+"D:\\ti\\ccsv7\\utils\\bin\\gmake" -k -j 4 all -O 
+gmake[1]: '002-FIR_CB.out' is up to date.
 
 **** Build Finished ****
