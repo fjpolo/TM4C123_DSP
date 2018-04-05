@@ -1,0 +1,188 @@
+/****************************************************************************************
+ *
+ *                  Moving Average Filter with Circular Buffer
+ *                  Franco J. Polo - fjpolo@gmail.com
+ *                              2018
+ *
+ ****************************************************************************************/
+
+/*
+ * Includes
+ */
+#include <stdint.h>
+#include <stdbool.h>
+#include "inc/tm4c123gh6pm.h"
+#include "inc/hw_types.h"
+#include "inc/hw_memmap.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/timer.h"
+
+
+/*
+ * Global signals
+ */
+
+/*
+// Sine @ 50Hz
+// fs = 500Hz
+const float sine[50] = {0.00000,   0.58779,   0.95106,   0.95106,   0.58779,
+                        0.00000,  -0.58779,  -0.95106,  -0.95106,  -0.58779,
+                        0.00000,   0.58779,   0.95106,   0.95106,   0.58779,
+                        0.00000,  -0.58779,  -0.95106,  -0.95106,  -0.58779,
+                        0.00000,   0.58779,   0.95106,   0.95106,   0.58779,
+                        0.00000,  -0.58779,  -0.95106,  -0.95106,  -0.58779,
+                        0.00000,   0.58779,   0.95106,   0.95106,   0.58779,
+                        0.00000,  -0.58779,  -0.95106,  -0.95106,  -0.58779,
+                        0.00000,   0.58779,   0.95106,   0.95106,   0.58779,
+                        0.00000,  -0.58779,  -0.95106,  -0.95106,  -0.58779};
+
+//Noisy sine @ 50Hz
+// fs = 500Hz
+const float noisysine[50] = {0.516103,   1.725424,   2.025208,   2.532391,   1.709973,
+                             1.298276,   0.551888,  -0.144230,   0.132277,   0.204097,
+                             1.521347,   0.888890,   1.984780,   1.988352,   1.512257,
+                             0.613279,   1.164040,   0.184014,  -0.280071,   0.879501,
+                             0.500269,   1.812989,   2.982865,   1.758536,   1.232334,
+                             0.899834,  -0.197860,   0.576230,   0.113202,   0.359972,
+                             1.866314,   1.174361,   2.165136,   1.204856,   2.636195,
+                             1.204906,   1.300884,  -0.030281,  -1.173993,   0.715174,
+                             1.751604,   2.011665,   2.073450,   2.586382,   1.678207,
+                             0.610072,   0.218001,  -0.528626,  -0.991873,  -0.075452};
+
+// 50Hz and 2000Hz sines
+// fs = 5000Hz
+const float sines[50] = { 0.00000,   0.65058,  -0.82572,   1.13844,  -0.33910,
+                          0.30902,   0.95591,  -0.52528,   1.43281,  -0.05196,
+                          0.58779,   1.22521,  -0.26651,   1.68003,   0.18273,
+                          0.80902,   1.43211,  -0.07475,   1.85588,   0.34199,
+                          0.95106,   1.55637,   0.03123,   1.94317,   0.41024,
+                          1.00000,   1.58581,   0.04106,   1.93334,   0.38080,
+                          0.95106,   1.51756,  -0.04623,   1.82736,   0.25654,
+                          0.80902,   1.35830,  -0.22209,   1.63560,   0.04964,
+                          0.58779,   1.12361,  -0.46930,   1.37684,  -0.21966,
+                          0.30902,   0.83648,  -0.76368,   1.07639,  -0.5249};
+
+// 50 Hz and 500Hz sines
+// fs = 5000Hz
+const float sines[50] = { 0.00000,   0.65058,   1.07639,   1.13844,   0.83648,
+                          0.30902,  -0.21966,  -0.52528,  -0.46930,  -0.05196,
+                          0.58779,   1.22521,   1.63560,   1.68003,   1.35830,
+                          0.80902,   0.25654,  -0.07475,  -0.04623,   0.34199,
+                          0.95106,   1.55637,   1.93334,   1.94317,   1.58581,
+                          1.00000,   0.41024,   0.04106,   0.03123,   0.38080,
+                          0.95106,   1.51756,   1.85588,   1.82736,   1.43211,
+                          0.80902,   0.18273,  -0.22209,  -0.26651,   0.04964,
+                          0.58779,   1.12361,   1.43281,   1.37684,   0.95591,
+                          0.30902,  -0.33910,  -0.76368,  -0.82572,  -0.52499};
+
+// 100Hz and 800Hz sines
+// fs = 5000Hz
+// Ts = 200uS
+const float sines[50] = { 0.00000,   0.96966,   1.15352,   0.49346,  -0.28876,
+                          -0.36327,   0.43586,   1.45506,   1.82662,   1.27295,
+                          0.36327,  -0.01574,   0.51627,   1.47978,   1.98031,
+                          1.53884,   0.53670,  -0.13796,   0.08597,   0.93324,
+                          1.53884,   1.25227,   0.24279,  -0.65614,  -0.71899,
+                          0.00000,   0.71899,   0.65614,  -0.24279,  -1.25227,
+                          -1.53884,  -0.93324,  -0.08597,   0.13796,  -0.53670,
+                          -1.53884,  -1.98031,  -1.47978,  -0.51627,   0.01574,
+                          -0.36327,  -1.27295,  -1.82662,  -1.45506,  -0.43586,
+                          0.36327,   0.28876,  -0.49346,  -1.15352,  -0.96966};
+ */
+// 100Hz sine with white noise
+// fs = 5000Hz
+
+
+/*
+// FIR coefficients: fs = 5000Hz, wc = 0.1pi = 250Hz
+// Rectangular window - 20dB attenuation
+const float hpf[8] = {-0.06430831, -0.09003163,  0.15005272,  0.45015816,
+                       0.45015816,  0.15005272, -0.09003163, -0.06430831};
+
+
+// FIR coefficients wc = 0.1pi = 250Hz @ fs = 5000Hz
+// Rectangular window - 20dB attenuation
+const float hlpf[8] = {0.0810332,  0.09003163,  0.09633978,  0.09958927,
+                      0.09958927, 0.09633978,  0.09003163,  0.0810332};
+
+// FIR coefficients wc = 0.2pi = 500Hz @ fs = 5000Hz
+// Rectangular window - 20db attenuation
+const float hhpf[8] = {0.0735766,  -0.12732395,  0.17167874, -0.19672633,
+                      0.19672633, -0.17167874,  0.12732395, -0.0735766};
+ */
+
+const float noisysine [51] = {-0.2675099   0.1373860  -0.3550683  -0.0922972   0.0477486   1.2908656  -0.4436795   1.2109093   0.8843162   1.6127550   1.2586889   1.4176823   2.1696553   1.5595758   0.7229912, 1.4283494   0.6295962   1.3898659   0.3679964   1.2186368   0.9031877   1.6275388  -0.1101673   0.7579835  -0.7764705  -0.2253687  -0.3899353  -0.0070775  -0.3096986  -0.1553032,  -0.3410388  -1.3391247  -0.8618178  -1.6605683  -1.6316006  -0.9862890  -0.9145708  -1.8025820  -0.2907881  -1.4326011  -1.3092994  -1.2684249  -0.9286705  -0.7646860  -0.4821794, -0.5168354   0.3926131  -0.7146609  -0.7508930   0.4944248  -0.5048410}
+
+/*
+ * Defines
+ */
+#define nc 8 // Number of filter coefficients
+
+
+/*
+ * Global declarations
+ * */
+//float y[42];
+int k = 0, pointer = 0, sine_index = 0;
+int output_index = 0;
+float y, circular_buffer[nc];
+
+/******************
+ * MAIN
+ *****************/
+int main(void)
+{
+    // Initializtion
+    uint8_t ui8LED = 2;
+    uint32_t ui32Period;
+    // Clock
+    //SysCtlClockSet(SYSCTL_SYSDIV_4|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
+    SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
+    // GPIO
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
+    // Timer0
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
+    // Sample Frequency -> 5000Hz
+    // Period -> 200uS
+    ui32Period = (SysCtlClockGet()/5000);
+    // Test simulating an audio signal @ fs = 44,1kHz
+    //ui32Period = (SysCtlClockGet()/44100);
+    TimerLoadSet(TIMER0_BASE, TIMER_A, ui32Period -1);
+    //
+    IntEnable(INT_TIMER0A);
+    TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    IntMasterEnable();
+    TimerEnable(TIMER0_BASE, TIMER_A);
+    //
+    //
+    //
+    while(1)
+    {
+        // Wait for interrupt
+    }
+}
+
+
+/*
+ * Timer interrupt
+ */
+// fs = 5000Hz -> T = 200uS
+void Timer0IntHandler(void)
+{
+    // Clear the timer interrupt
+    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    // Insert the newest sample into an N-sample circular buffer
+    // The oldest sample in the circular buffer is overwritten.
+    circular_buffer[pointer] = noisysine[sine_index];
+    // Increment sine index
+    if(sine_index == 50) sine_index = 0;
+    else sine_index++;
+    // Filter
+    y = (circular_buffer[(pointer)%nc]+circular_buffer[(pointer+1)%nc]+circular_buffer[(pointer+2)%nc]+circular_buffer[(pointer+3)%nc]+circular_buffer[(pointer+4)%nc]+circular_buffer[(pointer+5)%nc]circular_buffer[(pointer+6)%nc]+circular_buffer[(pointer+7)%nc])/8;
+    // Increment CB's pointer
+    pointer = (pointer+1)%nc;
+}
